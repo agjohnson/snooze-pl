@@ -182,15 +182,15 @@ WWW::Snooze::Request - Main request object featuring autoloading
 =head1 METHODS
 
 
-=head2 C<new(%args)>
+=head2 new(%args)
 
 =over 4
 
-=item C<headers>
+=item headers
 
 Override headers with an instance of L<HTTP::Headers>
 
-=item C<serializer>
+=item serializer
 
 Override serializer with and instance of L<WWW::Snooze::Serialize>
 
@@ -207,15 +207,15 @@ function can also be called with arguments:
     $r->foo(undef, foo => 'bar'); # Request would be http://example.com/foo?foo=bar
 
 
-=head2 C<get()>
+=head2 get()
 
-=head2 C<delete()>
+=head2 delete()
 
 HTTP operations on URL without extra parameters
 
-=head2 C<post([\%data])>
+=head2 post([\%data])
 
-=head2 C<put([\%data])>
+=head2 put([\%data])
 
 HTTP operations on URL, using %data
 

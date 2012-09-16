@@ -49,15 +49,15 @@ performed like so:
 
 =head1 METHODS
 
-=head2 C<request($baseurl, %args)>
+=head2 request($baseurl, %args)
 
 =over 4
 
-=item C<headers>
+=item headers
 
 Override headers with an instance of L<HTTP::Headers>
 
-=item C<serializer>
+=item serializer
 
 Override serializer with and instance of L<WWW::Snooze::Serialize>
 

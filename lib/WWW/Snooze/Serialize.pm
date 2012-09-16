@@ -37,25 +37,25 @@ WWW::Snooze::Serialize - Base object for building serializers
 
 =over 4
 
-=item C<extension>
+=item extension
 
 Set filename extension
 
-=item C<content_type>
+=item content_type
 
 Set MIME type on request
 
 =back
 
 
-=head2 C<encode()>
+=head2 encode()
 
-=head2 C<decode()>
+=head2 decode()
 
 Functions for overriding encoding and decoding of request/response data
 
 
-=head2 C<extension()>
+=head2 extension()
 
 Return the extension, prepended with '.'
 
