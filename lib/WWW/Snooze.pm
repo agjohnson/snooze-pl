@@ -53,8 +53,6 @@ performed like so:
 
 Returns an instance of L<WWW::Snooze::Request>
 
-=back
-
 =head1 AUTHOR
 
 Anthony Johnson E<lt>aj@ohess.orgE<gt>
