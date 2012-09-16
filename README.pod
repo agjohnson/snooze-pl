@@ -1,6 +1,6 @@
 =head1 NAME
 
-WWW::Snooze
+WWW::Snooze - Simple RESTful API
 
 =head1 SYNOPSIS
 
@@ -33,3 +33,16 @@ performed like so:
     );
     print Dumper($chili->issues(undef, limit => 1)->get());
 
+=head1 METHODS
+
+=head2 request
+
+Returns an instance of L<WWW::Snooze::Request>
+
+=back
+
+=head1 AUTHOR
+
+Anthony Johnson E<lt>aj@ohess.orgE<gt>
+
+=cut
