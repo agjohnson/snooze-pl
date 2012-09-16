@@ -31,6 +31,14 @@ sub AUTOLOAD {
     my $self = shift;
     my $name = $AUTOLOAD;
     $name =~ s/WWW::Snooze::Request:://;
+    return $self->_add_element($name, @_);
+}
+
+sub DESTROY {}
+
+sub _add_element {
+    my $self = shift;
+    my $name = shift;
 
     # TODO parse for multiple prototypes
     my $parts;
@@ -45,17 +53,16 @@ sub AUTOLOAD {
     return WWW::Snooze::Request->new(
         $self->{base},
         parts => [@{$self->{parts}}, @{$parts}],
-        headers => $self->{headers},
+        headers => $self->_headers,
         args => \%args,
-        serializer => $self->serializer
+        serializer => $self->_serializer
     );
 }
 
-sub DESTROY {}
-
-sub serializer { shift->{serializer}; }
-sub headers { shift->{headers}; }
-sub args { shift->{args}; }
+# Private-ish functions to avoid namespace collisions
+sub _serializer { shift->{serializer}; }
+sub _headers { shift->{headers}; }
+sub _args { shift->{args}; }
 
 sub _build_url {
     my $self = shift;
@@ -65,7 +72,7 @@ sub _build_url {
     push(@parts, @{$self->{parts}});
 
     # Add extension to last element
-    if (my $ext = $self->serializer->extension()) {
+    if (my $ext = $self->_serializer->extension()) {
         my $last = pop @parts;
         $last .= $ext;
         push @parts, $last;
@@ -73,7 +80,7 @@ sub _build_url {
 
     # Rebuild parts and query string
     $uri->path_segments(@parts);
-    $uri->query_form($self->args);
+    $uri->query_form($self->_args);
 
     return $uri->as_string();
 }
@@ -82,7 +89,6 @@ sub _request {
     my $self = shift;
     my $method = shift;
     my $data = shift;
-    my %args = @_;
 
     die 'Bad HTTP request method'
       unless (grep($_ eq $method, (qw/GET POST PUT DELETE/)));
@@ -98,14 +104,14 @@ sub _request {
     my $req = HTTP::Request->new(
         $method,
         $self->_build_url,
-        $self->headers
+        $self->_headers
     );
-    $req->content_type($self->serializer->content_type());
+    $req->content_type($self->_serializer->content_type());
 
     # Set content if available
     if (ref $data eq 'HASH') {
         $req->content(
-            $self->serializer->encode($data)
+            $self->_serializer->encode($data)
         );
     }
     return $h->request($req);
@@ -113,10 +119,10 @@ sub _request {
 
 sub get {
     my $self = shift;
-    my $res = $self->_request('GET', {}, @_);
+    my $res = $self->_request('GET', @_);
     given ($res->code) {
         when (200) {
-            return $self->serializer->decode(
+            return $self->_serializer->decode(
                 $res->content()
             );
         }
@@ -133,7 +139,7 @@ sub post {
     my $res = $self->_request('POST', @_);
     given ($res->code) {
         when (201) {
-            return $self->serializer->decode(
+            return $self->_serializer->decode(
                 $res->content()
             );
         }
@@ -196,39 +202,66 @@ Override serializer with and instance of L<WWW::Snooze::Serialize>
 
 =back
 
-The request object uses autoloading method names to build the request. Calling a
-method on the request object will add that method name on to the URL stack and
-return a new request object with the new stack. The
-function can also be called with arguments:
+=head2 get([\%data])
 
-    my $r = WWW::Snooze::Request->new('http://example.com');
-    $r->foo(); # Request URL would be http://example.com/foo.json
-    $r->foo(42)->bar; # Request URL would be http://example.com/foo/42/bar.json
-    $r->foo(undef, foo => 'bar'); # Request would be http://example.com/foo?foo=bar
-
-
-=head2 get()
-
-=head2 delete()
-
-HTTP operations on URL without extra parameters
+=head2 delete([\%data])
 
 =head2 post([\%data])
 
 =head2 put([\%data])
 
-HTTP operations on URL, using %data
+Perform HTTP operation on URL, %data is encoded using the serializer.
 
+
+=head1 AUTOMATIC METHODS
+
+The request object uses autoloading method names to build the request. Calling a
+method on the request object will add that method name on to the URL stack and
+return a new request object with the new stack.
+
+=head2 [$element]($id, %query_string)
+
+Automatic methods can be called with an C<id> argument, or C<undef> if there is
+no id, and named parameters which are encoded to a query string
+
+    my $r = WWW::Snooze::Request->new('http://example.com');
+    
+    $r->foo();
+    # Request URL would be http://example.com/foo.json
+    
+    $r->foo(42)->bar;
+    # http://example.com/foo/42/bar.json
+    
+    $r->foo(undef, foo => 'bar');
+    # http://example.com/foo?foo=bar
+
+=head2 _add_element($name, $id, %query_string)
+
+Automatic methods are built using this private function, however you can also
+revert to calling this directly in the case of a namespace collision with an
+element or a poorly named element.
+
+    $r->_add_element('poorly named');
+    # http://example.com/poorly%20named
+    
+    $r->_add_element('foo', 42, foo => bar);
+    # http://example.com/foo/42.json?foo=bar
 
 =head1 ATTRIBUTES
 
-=head2 args()
+Privately scoped to avoid namespace collision
+
+=head2 _args()
 
 Return query string arguments added
 
-=head2 serializer()
+=head2 _serializer()
 
 Return the serializer
+
+=head2 _headers()
+
+Return the HTTP::Headers object
 
 
 =head1 AUTHOR

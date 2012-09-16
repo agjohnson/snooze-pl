@@ -49,17 +49,9 @@ performed like so:
 
 =head1 METHODS
 
-=head2 request($baseurl, %args)
+=head2 request
 
-=over 4
-
-=item headers
-
-Override headers with an instance of L<HTTP::Headers>
-
-=item serializer
-
-Override serializer with and instance of L<WWW::Snooze::Serialize>
+Returns an instance of L<WWW::Snooze::Request>
 
 =back
 
