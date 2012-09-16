@@ -3,6 +3,7 @@
 MYMETA
 ^Makefile.old$
 ^Makefile$
+^Makefile.PL$
 ^MANIFEST\.
 .bak$
 ^Csistck.*.tar.gz$

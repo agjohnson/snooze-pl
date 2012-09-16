@@ -15,4 +15,8 @@ eval "use Test::Pod::Coverage $min_tpc";
 my $min_pc = 0.18;
 eval "use Pod::Coverage $min_pc";
 
-all_pod_coverage_ok();
+plan tests => 3;
+
+pod_coverage_ok('WWW::Snooze');
+pod_coverage_ok('WWW::Snooze::Request');
+pod_coverage_ok('WWW::Snooze::Serialize');

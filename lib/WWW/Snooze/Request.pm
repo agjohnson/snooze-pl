@@ -114,8 +114,6 @@ sub _request {
 sub get {
     my $self = shift;
     my $res = $self->_request('GET', {}, @_);
-    use Data::Dumper;
-    print Dumper $res;
     given ($res->code) {
         when (200) {
             return $self->serializer->decode(
@@ -176,5 +174,63 @@ sub delete {
     }
 }
 
-
 1;
+=head1 NAME
+
+WWW::Snooze::Request - Main request object featuring autoloading
+
+=head1 METHODS
+
+
+=head2 C<new(%args)>
+
+=over 4
+
+=item C<headers>
+
+Override headers with an instance of L<HTTP::Headers>
+
+=item C<serializer>
+
+Override serializer with and instance of L<WWW::Snooze::Serialize>
+
+=back
+
+The request object uses autoloading method names to build the request. Calling a
+method on the request object will add that method name on to the URL stack and
+return a new request object with the new stack. The
+function can also be called with arguments:
+
+    my $r = WWW::Snooze::Request->new('http://example.com');
+    $r->foo(); # Request URL would be http://example.com/foo.json
+    $r->foo(42)->bar; # Request URL would be http://example.com/foo/42/bar.json
+    $r->foo(undef, foo => 'bar'); # Request would be http://example.com/foo?foo=bar
+
+
+=head2 C<get()>
+
+=head2 C<delete()>
+
+HTTP operations on URL without extra parameters
+
+=head2 C<post([\%data])>
+
+=head2 C<put([\%data])>
+
+HTTP operations on URL, using %data
+
+
+=head1 ATTRIBUTES
+
+=head2 args()
+
+Return query string arguments added
+
+=head2 serializer()
+
+Return the serializer
+
+
+=head1 AUTHOR
+
+Anthony Johnson E<lt>aj@ohess.orgE<gt>
