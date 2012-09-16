@@ -61,19 +61,18 @@ sub _build_url {
     my $self = shift;
     my $uri = URI->new($self->{base});
 
-    # Add extension to last element
-    if (my $ext = $self->serializer->extension()) {
-        my $last = pop @{$self->{parts}};
-        $last .= $ext;
-        push @{$self->{parts}}, $last;
-    }
-
-    # Add parts
     my @parts = $uri->path_segments();
     push(@parts, @{$self->{parts}});
-    $uri->path_segments(@parts);
 
-    # Add encoded query
+    # Add extension to last element
+    if (my $ext = $self->serializer->extension()) {
+        my $last = pop @parts;
+        $last .= $ext;
+        push @parts, $last;
+    }
+
+    # Rebuild parts and query string
+    $uri->path_segments(@parts);
     $uri->query_form($self->args);
 
     return $uri->as_string();
