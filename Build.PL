@@ -21,6 +21,13 @@ my $builder = Module::Build->new(
     },
     add_to_cleanup => [ 'WWW-Snooze-*' ],
     create_makefile_pl => 'traditional',
+    meta_merge => {
+        resources => {
+            homepage => 'http://ohess.org/projects/snooze-pl',
+            bugtracker => 'http://github.com/agjohnson/snooze-pl/issues',
+            repository => 'http://github.com/agjohnson/snooze-pl.git',
+        }
+    },
 );
 
 $builder->create_build_script();
