@@ -1,4 +1,6 @@
 Revision history for Perl extension WWW::Snooze.
 
+v0.01_02 Thu Sep 27 19:58:34 PDT 2012
+    - Added missing build depends
 v0.01_01 Sun Sep 16 01:22:36 PDT 2012
     - Initial release
